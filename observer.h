@@ -6,13 +6,13 @@
 class Observer {
 public:
     virtual ~Observer() {}
-    virtual void update(std::vector<std::string>& newCommands, long time) = 0;
+    virtual void update(const std::vector<std::string>& newCommands, long time) = 0;
 };
 
 class Registrator: public Observer {
 public:
     Registrator() = default;
-    void update(std::vector<std::string>& newCommands, long time);
+    void update(const std::vector<std::string>& newCommands, long time);
 private:
     std::ofstream m_bulkLog;
 };

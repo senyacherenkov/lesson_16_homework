@@ -26,7 +26,7 @@ void Subject::addObserver(std::shared_ptr<Observer> observer)
     m_observers.push_back(observer);
 }
 
-void Subject::removeObserver(std::shared_ptr<Observer> &observer)
+void Subject::removeObserver(std::shared_ptr<Observer> observer)
 {
     auto it = std::find(m_observers.begin(), m_observers.end(), observer);
 
@@ -44,35 +44,47 @@ void Reader::readCommands()
         std::string temp;
         std::getline(std::cin, temp);
 
-        if(m_commands.empty())
-            m_timeOfFirstCommand = get_seconds_since_epoch();
+        if(!temp.empty())
+        {
 
-        if(temp == "}") {
-            closeBracketNumber++;
-            if(dynamicMode && !m_commands.empty() && (closeBracketNumber == openBracketNumber)) {
+            if(m_commands.empty())
+                m_timeOfFirstCommand = get_seconds_since_epoch();
+
+            if(temp == "}") {
+                closeBracketNumber++;
+                if(dynamicMode && !m_commands.empty() && (closeBracketNumber == openBracketNumber)) {
+                    notifyObservers();
+                    m_commands.clear();
+                    dynamicMode = false;
+                }
+                continue;
+            }
+            if(temp == "{") {
+                openBracketNumber++;
+                if(!dynamicMode) {
+                    m_commands.clear();
+                    dynamicMode = true;
+                }
+                continue;
+            }
+
+            m_commands.push_back(temp);
+            if(!dynamicMode && m_commands.size() == m_N) {
                 notifyObservers();
-                dynamicMode = false;
-            }
-            continue;
-        }
-        if(temp == "{") {
-            openBracketNumber++;
-            if(!dynamicMode) {
                 m_commands.clear();
-                dynamicMode = true;
             }
-            continue;
         }
-
-        m_commands.push_back(temp);
-        if(!dynamicMode && m_commands.size() == m_N)
+        else if(!m_commands.empty())
+        {
             notifyObservers();
+            m_commands.clear();
+            break;
+        }
     }
 }
 
 void Reader::notifyObservers()
 {
     for(const auto& observer: m_observers)
-        observer->update(m_commands, m_timeOfFirstCommand);
-    m_commands.clear();
+        observer->update(m_commands, m_timeOfFirstCommand);    
 }

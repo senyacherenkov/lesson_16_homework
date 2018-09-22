@@ -2,17 +2,17 @@
 #include <string>
 #include "observer.h"
 
-void Registrator::update(std::vector<std::string>& newCommands, long time)
+void Registrator::update(const std::vector<std::string> &newCommands, long time)
 {
     std::string output;
 
     //writing to stdout
     output.append("bulk: ");
 
-    for(const auto& command: newCommands) {
-        output.append(" ");
-        output.append(command);
-        output.append(",");
+    for(auto it = newCommands.begin(); it != newCommands.end(); it++) {
+        output.append(*it);
+        if(it != newCommands.end() - 1)
+            output.append(", ");
     }
     std::cout << output << std::endl;
 

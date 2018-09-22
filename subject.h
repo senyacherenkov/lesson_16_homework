@@ -15,7 +15,7 @@ public:
 
     void addObserver(std::shared_ptr<Observer> observer);
 
-    void removeObserver(std::shared_ptr<Observer>& observer);
+    void removeObserver(std::shared_ptr<Observer> observer);
 
     virtual void notifyObservers() = 0;
 
